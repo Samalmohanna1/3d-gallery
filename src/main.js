@@ -139,7 +139,7 @@ const init = () => {
 	const blocker = document.getElementById('blocker')
 	const instructions = document.getElementById('instructions')
 
-	instructions.addEventListener('click', function () {
+	instructions.addEventListener('pointerdown', function () {
 		controls.lock()
 	})
 
