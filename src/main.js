@@ -52,8 +52,8 @@ const sunLight = new THREE.DirectionalLight('orange', 0.02) //0xe8c37b
 const sLHelper = new THREE.DirectionalLightHelper(sunLight, 6)
 
 const cubeLight = createSpotlight('#cc330d') //0xFF7F00
-const cLHelper = new THREE.SpotLightHelper(cubeLight)
 const cubeLight2 = createSpotlight(0x7f00ff)
+const cLHelper = new THREE.SpotLightHelper(cubeLight2)
 
 const introLight = new THREE.PointLight('#ff9b3e', .8, 60)
 const introLight2 = new THREE.PointLight('#cc330d', 1, 60)
@@ -74,7 +74,7 @@ floorTexture.wrapS = THREE.RepeatWrapping
 floorTexture.wrapT = THREE.RepeatWrapping
 floorTexture.repeat.set(10, 10)
 
-const planeGeometry = new THREE.PlaneGeometry(100, 200)
+const planeGeometry = new THREE.PlaneGeometry(200, 200)
 const planeMaterial = new THREE.MeshStandardMaterial({
 	roughness: 0.8,
 	metalness: 0.2,
@@ -125,10 +125,11 @@ const init = () => {
 
 	sunLight.position.set(0, 45, 0)
 	sunLight.castShadow = true
-	cubeLight.position.set(30, 40, 0)
+	cubeLight.position.set(80, 40, 80)
 	//  cubeLight.rotation.z = Math.PI / 2
 	cubeLight.target = cube
-	cubeLight2.position.set(45, 45, 20)
+	cubeLight2.position.set(80, 35, 60)
+  cubeLight2.target = cube
 
 	introLight.position.set(0, 45, -70)
   introLight2.position.set(30, 5, -60)
@@ -244,7 +245,8 @@ gltfLoader.load('/intro_scene.glb', (introScene)=> {
 
 	cube.receiveShadow = true
 	cube.castShadow = true
-	cube.position.set(30, 16, 0)
+	// cube.position.set(30, 16, 0)
+  cube.position.set(80, 16, 80)
 
 	//----------------------------------
 
