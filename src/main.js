@@ -6,7 +6,6 @@ import {GLTFLoader} from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loade
 const gltfLoader = new GLTFLoader()
 const wallColor = 'white'
 const ceilingColor = '#f5f1ed'
-const cubeColor = 'aqua'
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
 	60,
@@ -14,7 +13,7 @@ const camera = new THREE.PerspectiveCamera(
 	0.1,
 	1000
 )
-let introModel
+let gltfModels
 
 //renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -46,27 +45,54 @@ const createSpotlight = (color) => {
 	return newObj
 }
 
+const createCube = (size) => {
+  const cubeGeometry = new THREE.BoxGeometry(size, size, size)
+const cubeMaterial = new THREE.MeshPhongMaterial()
+const newObj = new THREE.Mesh(cubeGeometry, cubeMaterial)
+
+	newObj.castShadow = true
+  newObj.receiveShadow = true
+
+	return newObj
+}
+
+const createPointLightWithShadow = (color, intensity, distance) => {
+  const light = new THREE.PointLight(color, intensity, distance)
+  //Set up shadow properties for the light
+light.castShadow = true; // default false
+light.shadow.mapSize.width = 512; // default
+light.shadow.mapSize.height = 512; // default
+light.shadow.camera.near = 1; // default
+light.shadow.camera.far = 30; // default
+// const helper = new THREE.CameraHelper( light.shadow.camera );
+// helper.lookAt = light
+// scene.add( helper );
+return light
+}
+
 //lights
 const ambientLight = new THREE.AmbientLight('white', 0.05)
-const sunLight = new THREE.DirectionalLight('orange', 0.02) //0xe8c37b
+const sunLight = new THREE.DirectionalLight('cyan', 0.1) //0xe8c37b
 const sLHelper = new THREE.DirectionalLightHelper(sunLight, 6)
 
 const cubeLight = createSpotlight('#cc330d') //0xFF7F00
 const cubeLight2 = createSpotlight(0x7f00ff)
 const cLHelper = new THREE.SpotLightHelper(cubeLight2)
 
-const introLight = new THREE.PointLight('#ff9b3e', .8, 60)
-const introLight2 = new THREE.PointLight('#cc330d', 1, 60)
-const introLight3 = new THREE.PointLight('#2323be', .5, 40)
-const iLHelper = new THREE.PointLightHelper(introLight)
-const iLHelper2 = new THREE.PointLightHelper(introLight2)
-const iLHelper3 = new THREE.PointLightHelper(introLight3)
+const introLight = createPointLightWithShadow('#ff9b3e', .8, 60)
+const introLight2 = createPointLightWithShadow('#cc330d', 1, 60)
+const introLight3 = createPointLightWithShadow('#2323be', .8, 40)
+
+const seatingLight = createPointLightWithShadow('#eb37b5', .9, 50, 1)//0dde8e (purple)
+const seatingLight2 = createPointLightWithShadow('#2ec9f8', 1, 80, 1)//2323be cyan
+
+const neonLight = createPointLightWithShadow('#0dde8e', .8, 25, 10)
+const neonLight2 = createPointLightWithShadow('#03c57b', 0, 25, 10)
 
 //cube
-const cubeGeometry = new THREE.BoxGeometry(6, 6, 6)
-const cubeMaterial = new THREE.MeshPhongMaterial()
-cubeMaterial.shininess = 100
-const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
+const cube = createCube(6)
+const cube2 = createCube(4)
+const cube3 = createCube(2)
 
 //floor
 const floorTexture = new THREE.TextureLoader().load('../Floor.jpg')
@@ -120,13 +146,12 @@ const init = () => {
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	renderer.outputEncoding = THREE.sRGBEncoding
 
-	camera.position.set(0, 5, 90)
+	camera.position.set(0, 5, 0)
 	camera.rotation.set(0, 0, 0)
 
-	sunLight.position.set(0, 45, 0)
+	sunLight.position.set(60, 10, 0)
 	sunLight.castShadow = true
 	cubeLight.position.set(80, 40, 80)
-	//  cubeLight.rotation.z = Math.PI / 2
 	cubeLight.target = cube
 	cubeLight2.position.set(80, 35, 60)
   cubeLight2.target = cube
@@ -134,6 +159,12 @@ const init = () => {
 	introLight.position.set(0, 45, -70)
   introLight2.position.set(30, 5, -60)
   introLight3.position.set(-40, 15, -80)
+
+  seatingLight.position.set(-61, 20, 89)
+  seatingLight2.position.set(-86, 30, 72)
+
+  neonLight.position.set(52, 3, 3)
+  neonLight2.position.set(58, 7, 6)
 
 	controls = new PointerLockControls(camera, document.body)
   
@@ -222,31 +253,59 @@ const init = () => {
 	//----------------------------------
 
   gltfLoader.load('/intro_bg.glb', (introBg)=> {
-    introModel = introBg.scene
-    introModel.scale.set(5.75,5.75,5.75)
-    introModel.position.set(0, 19.5, -99.5)
-    introModel.rotation.set(-(Math.PI/2), 0, Math.PI)
-    introModel.castShadow = true
-    introModel.receiveShadow = true
+    gltfModels = introBg.scene
+    gltfModels.scale.set(5.75,5.75,5.75)
+    gltfModels.position.set(0, 19.5, -99.5)
+    gltfModels.rotation.set(-(Math.PI/2), 0, Math.PI)
+    gltfModels.castShadow = true
+    gltfModels.receiveShadow = true
     scene.add(introBg.scene)
 })
 
 gltfLoader.load('/intro_scene.glb', (introScene)=> {
-  introModel = introScene.scene
-  introModel.scale.set(15,15,15)
-  introModel.position.set(0, 0.1, -60)
-  // introModel.rotation.set(-(Math.PI/2), 0, Math.PI)
-  introModel.castShadow = true
-  introModel.receiveShadow = true
+  gltfModels = introScene.scene
+  gltfModels.scale.set(15,15,15)
+  gltfModels.position.set(0, 0.1, -60)
+  gltfModels.traverse(( object ) =>  {
+
+    if ( object.isMesh ) object.castShadow = true;
+
+  } )
+  gltfModels.receiveShadow = true
   scene.add(introScene.scene)
 })
 
- 	//----------------------------------
+gltfLoader.load('/gallery_seating.glb', (seating)=> {
+  gltfModels = seating.scene
+  gltfModels.scale.set(2,2,2)
+  gltfModels.position.set(-40, 0, 90)
+  gltfModels.rotation.set(0, 40, 0)
+  gltfModels.traverse(( object ) =>  {
 
-	cube.receiveShadow = true
-	cube.castShadow = true
-	// cube.position.set(30, 16, 0)
-  cube.position.set(80, 16, 80)
+    if ( object.isMesh ) object.castShadow = true;
+
+  } )
+  gltfModels.receiveShadow = true
+  scene.add(seating.scene)
+})
+
+gltfLoader.load('/neon_name.glb', (neonName)=> {
+  gltfModels = neonName.scene
+  gltfModels.scale.set(2,2,2)
+  gltfModels.position.set(56, 9, 3)
+  gltfModels.rotation.set(0, -40, 0)
+  gltfModels.traverse(( object ) =>  {
+
+    if ( object.isMesh ) object.castShadow = true;
+
+  } )
+  gltfModels.receiveShadow = true
+  scene.add(gltfModels)
+})
+ 	//----------------------------------
+  cube.position.set(80, 14, 80)
+  cube2.position.set(85, 25, 80)
+  cube3.position.set(80, 7, 75)
 
 	//----------------------------------
 
@@ -282,13 +341,14 @@ gltfLoader.load('/intro_scene.glb', (introScene)=> {
 	//----------------------------------
 	scene.add(camera)
 	scene.add(ambientLight)
-	// scene.add(sunLight)
+	//scene.add(sunLight)
 	scene.add(cubeLight, cubeLight2)
 	scene.add(cubeLight.target)
-	// scene.add(sLHelper, cLHelper)
+	//scene.add(sLHelper, cLHelper)
 	scene.add(introLight,introLight2,introLight3)
-  // scene.add(iLHelper,iLHelper2,iLHelper3)
-	scene.add(cube)
+	scene.add(seatingLight,seatingLight2)
+	scene.add(neonLight,neonLight2)
+	scene.add(cube, cube2, cube3)
 	scene.add(floor)
 	// scene.add(ceiling)
 	// scene.add(wallGroup)
@@ -329,6 +389,17 @@ const tween = (light) => {
 		.start()
 }
 
+const rotateCubes = () => {
+  cube.rotation.x += 0.01
+	cube.rotation.y += 0.01
+
+  cube2.rotation.x += 0.03
+	cube2.rotation.y -= 0.01
+
+  cube3.rotation.x -= 0.02
+	cube3.rotation.y += 0.02
+}
+
 const animate = () => {
 	// tween(cubeLight)
 	// tween(introLight)
@@ -344,8 +415,7 @@ const render = () => {
 	const time = performance.now()
   const lightsTime = Date.now() * 0.0005
 
-	cube.rotation.x += 0.01
-	cube.rotation.y += 0.01
+	rotateCubes()
 
   // introLight.position.x = Math.sin(lightsTime * 0.7) * 3
 	// introLight.position.y = Math.cos(lightsTime * 0.9) * 4

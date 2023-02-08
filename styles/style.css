@@ -167,6 +167,10 @@ canvas {
 .my-colors {
   color: #ff653e;
   color: #cc330d;
+  color: #0dde8e;
+  color: #03c57b;
+  color: #2ec9f8;
+  color: #eb37b5;
 }
 .fixed-banner {
   background-color: #111;
@@ -180,6 +184,7 @@ canvas {
   display: flex;
   align-items: center;
   flex-direction: column;
+  padding: 0rem 2rem;
 }
 
 .banner-content a {
@@ -187,14 +192,19 @@ canvas {
   color: inherit;
 }
 
+.banner-content h2,
+.banner-content p {
+  margin: .2rem 0rem;
+}
+
 .banner-content a:hover,
 .banner-content a:active {
   color: #ff653e;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 850px) {
   .banner-content {
     flex-direction: row;
-    gap: 2rem;
+    justify-content: space-between;
   }
 }
