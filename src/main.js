@@ -87,7 +87,7 @@ const seatingLight = createPointLightWithShadow('#eb37b5', .9, 50, 1)//0dde8e (p
 const seatingLight2 = createPointLightWithShadow('#2ec9f8', 1, 80, 1)//2323be cyan
 
 const neonLight = createPointLightWithShadow('#0dde8e', .8, 25, 10)
-const neonLight2 = createPointLightWithShadow('#03c57b', 0, 25, 10)
+const neonLight2 = createPointLightWithShadow('#03c57b', .8, 25, 10)
 
 //cube
 const cube = createCube(6)
@@ -289,10 +289,10 @@ gltfLoader.load('/gallery_seating.glb', (seating)=> {
   scene.add(seating.scene)
 })
 
-gltfLoader.load('/neon_name.glb', (neonName)=> {
+gltfLoader.load('/neon_name_2.glb', (neonName)=> {
   gltfModels = neonName.scene
   gltfModels.scale.set(2,2,2)
-  gltfModels.position.set(56, 9, 3)
+  gltfModels.position.set(56, 5.5, 3)
   gltfModels.rotation.set(0, -40, 0)
   gltfModels.traverse(( object ) =>  {
 
@@ -413,15 +413,18 @@ const animate = () => {
 
 const render = () => {
 	const time = performance.now()
-  const lightsTime = Date.now() * 0.0005
 
 	rotateCubes()
 
-  // introLight.position.x = Math.sin(lightsTime * 0.7) * 3
-	// introLight.position.y = Math.cos(lightsTime * 0.9) * 4
-  // introLight.position.z = Math.cos(lightsTime * 0.3) * -90
+  // if(Math.random() > .98){
+  //   neonLight.intensity = 0.8
+  //   neonLight2.intensity = 0.8
+  // }else {
+  //   neonLight.intensity = 1
+  //   neonLight2.intensity = 1
+  // }
 
-	TWEEN.update()
+	// TWEEN.update()
 
 	if (controls.isLocked === true) {
 		raycaster.ray.origin.copy(controls.getObject().position)
