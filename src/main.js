@@ -3,7 +3,21 @@ import { TWEEN } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/libs/twe
 import { PointerLockControls } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/controls/PointerLockControls'
 import {GLTFLoader} from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/GLTFLoader'
 
-const gltfLoader = new GLTFLoader()
+
+//loading screen
+const loadingManager = new THREE.LoadingManager()
+
+const progressBar = document.getElementById('load-progress-bar')
+loadingManager.onProgress = (url, loaded, total) => {
+  progressBar.value = (loaded / total) * 100
+}
+
+const progressBarContainer = document.querySelector('.progress-bar-container')
+loadingManager.onLoad = () => {
+  progressBarContainer.style.display = 'none'
+}
+
+const gltfLoader = new GLTFLoader(loadingManager)
 const wallColor = 'white'
 const ceilingColor = '#f5f1ed'
 const scene = new THREE.Scene()
